@@ -1,5 +1,6 @@
 package com.mytodo.backend.task;
 
+import com.mytodo.backend.role.RoleRepository;
 import com.mytodo.backend.user.UserModel;
 import com.mytodo.backend.user.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -23,22 +24,25 @@ class TaskRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    UserModel user1;
+    @Autowired
+    private RoleRepository roleRepository;
+
+    UserModel savedUser;
     TaskModel task1;
 
     @BeforeEach
     void setup() {
-        user1 = new UserModel("Laura","McCan","lm@gmail.com","1");
+        UserModel user1 = new UserModel("Laura","McCan","lm@gmail.com","1");
+        user1.setRoleModel(roleRepository.findAll());
+        savedUser = userRepository.save(user1);
+
         task1 = new TaskModel("Smile Often","Smile first thing in the morning");
+        task1.setUserModel(savedUser);
     }
 
     @Test
     void save() {
-        UserModel savedUser = userRepository.save(user1);
-
-        task1.setUserModel(savedUser);
         TaskModel savedTask = taskRepository.save(task1);
-
         Assertions.assertTrue(savedTask.getId() > 0);
     }
 

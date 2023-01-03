@@ -18,8 +18,14 @@ class RoleRepositoryTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    RoleModel admin = new RoleModel("admin");
-    RoleModel user = new RoleModel("user");
+    RoleModel admin;
+    RoleModel user;
+
+    @BeforeEach()
+    void setup() {
+        admin = new RoleModel("admin");
+        user = new RoleModel("user");
+    }
 
     @Test
     void save() {

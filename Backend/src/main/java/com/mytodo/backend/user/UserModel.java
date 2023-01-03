@@ -1,8 +1,12 @@
 package com.mytodo.backend.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.task.TaskModel;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +34,7 @@ public class UserModel {
             mappedBy = "userModel", // Specifies the name of the field in the TaskModel entity that represents the other side of the relationship.
             cascade = CascadeType.REMOVE
             )
+    @JsonIgnore
     private List<TaskModel> taskModel = new ArrayList<>();
 
     @ManyToMany
@@ -37,13 +42,16 @@ public class UserModel {
             name = "users_roles",
             joinColumns = @JoinColumn(
                     name = "user_id",
-                    referencedColumnName = "userId"),
-                    foreignKey = @ForeignKey(name = "users_roles_user_userId_fk"),
+                    referencedColumnName = "userId",
+                    nullable = false,
+                    foreignKey = @ForeignKey(name = "users_roles_user_userId_fk")),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id",
                     referencedColumnName = "roleId",
+                    nullable = false,
                     foreignKey = @ForeignKey(name = "users_roles_user_roleId_fk"))
     )
+    @NotEmpty(message = "User must have a role assigned")
     private List<RoleModel> roleModel = new ArrayList<>();
 
     public UserModel(String firstName, String lastName, String email, String password) {

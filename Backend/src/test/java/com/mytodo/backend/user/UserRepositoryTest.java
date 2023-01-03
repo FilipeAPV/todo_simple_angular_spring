@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Rollback(value = false)
@@ -28,7 +26,6 @@ class UserRepositoryTest {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private TaskRepository taskRepository;
 
@@ -71,21 +68,21 @@ class UserRepositoryTest {
         Predicate<TaskModel> tasksAssignedToUser1 = (task) -> task.getUserModel().getUserId() == user1.getUserId();
 
         List<RoleModel> listOfAllRolesBeforeDeletion = roleRepository.findAll();
-        long userTasksListBeforeDeletion = taskRepository.findAll().stream()
+        long userTaskCountBeforeDeletion = taskRepository.findAll().stream()
                 .filter(tasksAssignedToUser1)
                 .count();
 
         userRepository.delete(user1);
 
         List<RoleModel> listOfAllRolesAfterDeletion = roleRepository.findAll();
-        long userTasksListAfterDeletion = taskRepository.findAll().stream()
+        long userTaskCountAfterDeletion = taskRepository.findAll().stream()
                 .filter(tasksAssignedToUser1)
                 .count();
 
         Assertions.assertEquals(listOfAllRolesBeforeDeletion.size(), listOfAllRolesAfterDeletion.size());
 
-        if (userTasksListBeforeDeletion > 0) {
-            Assertions.assertEquals(0, userTasksListAfterDeletion);
+        if (userTaskCountBeforeDeletion > 0) {
+            Assertions.assertEquals(0, userTaskCountAfterDeletion);
         } else {
             System.out.println(user1.getEmail() + "had no tasks before deletion");
         }
