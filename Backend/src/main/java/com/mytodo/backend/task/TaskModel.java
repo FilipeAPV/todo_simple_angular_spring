@@ -29,12 +29,53 @@ public class TaskModel {
      *   Name of the foreign key constraint.
      *   Foreign key constraint ensures that the value in the foreign key column (this one `user_id`) must be a valid primary key value in the `user` table
      */
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "userId",
-            // FK naming: tableWHereIsLocated_tableOfThePk_FieldofThePK
-            foreignKey = @ForeignKey(name = "task_user_userId_fk"))
+            // FK naming: tableWHereIsLocated_tableOfThePk_FieldOfThePK
+            foreignKey = @ForeignKey(name = "task_user_userId_fk"),
+            nullable = false)
     private UserModel userModel;
 
+    public TaskModel(String title, String text) {
+        this.title = title;
+        this.text = text;
+    }
+
+    public TaskModel() {
+
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public UserModel getUserModel() {
+        return userModel;
+    }
+
+    public void setUserModel(UserModel userModel) {
+        this.userModel = userModel;
+    }
 }
