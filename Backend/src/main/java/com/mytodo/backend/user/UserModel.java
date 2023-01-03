@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.task.TaskModel;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,15 +20,20 @@ public class UserModel {
     private long userId;
 
     @Column(nullable = false)
+    @NotBlank
     private String firstName;
 
     @Column(nullable = false)
+    @NotBlank
     private String lastName;
 
     @Column(nullable = false)
+    @NotBlank
+    @Email
     private String email;
 
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @OneToMany(
@@ -119,5 +125,16 @@ public class UserModel {
 
     public void setRoleModel(List<RoleModel> roleModel) {
         this.roleModel = roleModel;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
