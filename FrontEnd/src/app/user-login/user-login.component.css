@@ -1,0 +1,8 @@
+.container {
+  max-width: 500px;
+}
+
+/* This is necessary because, by default, the container will only be as tall as its contents. */
+.setContainerHeight {
+  height: 100vh;
+}

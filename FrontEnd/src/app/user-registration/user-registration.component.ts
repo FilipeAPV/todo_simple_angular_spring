@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {catchError, of, tap} from "rxjs";
 
@@ -10,19 +10,23 @@ import {catchError, of, tap} from "rxjs";
 })
 export class UserRegistrationComponent implements OnInit {
 
-  registrationForm: FormGroup;
+  registrationForm!: FormGroup;
 
   constructor(private http: HttpClient) {
-    this.registrationForm = new FormGroup({
-      "firstName": new FormControl(),
-      "lastName": new FormControl(),
-      "email": new FormControl(),
-      "password": new FormControl()
-    })
+
   }
 
   ngOnInit(): void {
+    this.registrationForm = new FormGroup({
+      "firstName": new FormControl("fNameTest", Validators.required),
+      "lastName": new FormControl("lNameTest", Validators.required),
+      "email": new FormControl("", [Validators.required, Validators.email]),
+      "password": new FormControl("a", Validators.required)
+    })
 
+/*    this.http.get('http://localhost:8080/users').subscribe(
+      data => { console.log(data) }
+    );*/
   }
 
   onSubmit() {
