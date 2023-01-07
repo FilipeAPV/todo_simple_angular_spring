@@ -1,7 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators
+} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {catchError, of, tap} from "rxjs";
+import {nonRepeatedEmailValidator, passwordMatchingValidator} from "./user-validation";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-user-registration',
@@ -12,24 +19,34 @@ export class UserRegistrationComponent implements OnInit {
 
   registrationForm!: FormGroup;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private router: Router) {
 
   }
 
   ngOnInit(): void {
     this.registrationForm = new FormGroup({
-      "firstName": new FormControl("fNameTest", Validators.required),
-      "lastName": new FormControl("lNameTest", Validators.required),
-      "email": new FormControl("", [Validators.required, Validators.email]),
-      "password": new FormControl("a", Validators.required)
+      "firstName": new FormControl("", [Validators.required, Validators.minLength(2)]),
+      "lastName": new FormControl("", Validators.required),
+      "email": new FormControl("", [Validators.required,
+                  Validators.email, Validators.minLength(7)]),
+
+      "passwords": new FormGroup({
+        "password": new FormControl("", Validators.required),
+        "confirmPassword": new FormControl("",[Validators.required])
+      }, {validators: passwordMatchingValidator })
+
+    }, {validators: nonRepeatedEmailValidator});
+
+    this.registrationForm.valueChanges.subscribe(()=> {
+ /*     console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
+      console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*/
     })
 
-/*    this.http.get('http://localhost:8080/users').subscribe(
-      data => { console.log(data) }
-    );*/
   }
 
   onSubmit() {
+
     console.log(this.registrationForm.value);
     const registrationData = this.registrationForm.value;
     this.http.post('http://localhost:8080/registerUser', registrationData)
@@ -42,4 +59,38 @@ export class UserRegistrationComponent implements OnInit {
         error: error => console.log(error)
       });
   }
+
+  isNotEmpty(input: AbstractControl) {
+    return (input.value !== "" && input.value !== null && input.value !== undefined);
+  }
+
+  getGenericInputClasses(formControlName: string): { [key: string]: boolean | undefined } {
+    const formControl = this.registrationForm.get(formControlName);
+    return {
+      'is-invalid' : (formControl?.invalid && formControl?.touched && this.isNotEmpty(formControl))
+    }
+  }
+
+  getEmailInputClasses(): { [key: string]: boolean | undefined } {
+
+    const formControl = this.registrationForm.get('email');
+
+    return {
+      'is-invalid' : formControl?.invalid && formControl?.touched && this.isNotEmpty(formControl)|| this.registrationForm.getError('emailIsAlreadyInDb'),
+      'is-valid' : formControl?.valid && !this.registrationForm.getError('emailIsAlreadyInDb')
+    }
+  }
+
+  getConfirmPasswordInputClasses(): {[key: string] : boolean | undefined} {
+
+    const formControl = this.registrationForm.get('passwords.confirmPassword');
+
+    return {
+      'is-invalid' : (
+        formControl?.invalid && formControl?.touched && this.isNotEmpty(formControl))
+        ||
+        (this.registrationForm.get('passwords')?.getError('passwordMismatch') && formControl?.touched
+        )}
+  }
+
 }

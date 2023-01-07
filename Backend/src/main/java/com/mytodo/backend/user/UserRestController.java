@@ -32,7 +32,6 @@ public class UserRestController {
         boolean isSaved = userService.saveUser(user);
 
         return ResponseEntity.ok("Success from backend");
-
     }
 
 }
