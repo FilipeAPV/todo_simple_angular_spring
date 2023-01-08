@@ -7,8 +7,9 @@ import {
 } from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {catchError, of, tap} from "rxjs";
-import {nonRepeatedEmailValidator, passwordMatchingValidator} from "./user-validation";
 import {Router} from "@angular/router";
+import {UserRegistrationService} from "./user-registration.service";
+import {UserValidationService} from "./user-validation.service";
 
 @Component({
   selector: 'app-user-registration',
@@ -20,7 +21,8 @@ export class UserRegistrationComponent implements OnInit {
   registrationForm!: FormGroup;
 
   constructor(private http: HttpClient,
-              private router: Router) {
+              private router: Router,
+              private userValidationService: UserValidationService) {
 
   }
 
@@ -28,21 +30,23 @@ export class UserRegistrationComponent implements OnInit {
     this.registrationForm = new FormGroup({
       "firstName": new FormControl("", [Validators.required, Validators.minLength(2)]),
       "lastName": new FormControl("", Validators.required),
-      "email": new FormControl("", [Validators.required,
-                  Validators.email, Validators.minLength(7)]),
+      "email": new FormControl("", {
+        validators: [Validators.required, Validators.email, Validators.minLength(7), Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')],
+        asyncValidators: [this.userValidationService.nonRepeatedEmailValidator()],
+        updateOn:'blur' }),
 
       "passwords": new FormGroup({
         "password": new FormControl("", Validators.required),
         "confirmPassword": new FormControl("",[Validators.required])
-      }, {validators: passwordMatchingValidator })
+      }, {validators: this.userValidationService.passwordMatchingValidator ,
+      updateOn:'change'})
 
-    }, {validators: nonRepeatedEmailValidator});
+    });
 
     this.registrationForm.valueChanges.subscribe(()=> {
- /*     console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
-      console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*/
+      console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
+      /*console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*/
     })
-
   }
 
   onSubmit() {
@@ -94,3 +98,28 @@ export class UserRegistrationComponent implements OnInit {
   }
 
 }
+
+/*
+
+ngOnInit(): void {
+  this.registrationForm = new FormGroup({
+      "firstName": new FormControl("", [Validators.required, Validators.minLength(2)]),
+      "lastName": new FormControl("", Validators.required),
+      "email": new FormControl("", [Validators.required,
+        Validators.email, Validators.minLength(7)]),
+
+      "passwords": new FormGroup({
+        "password": new FormControl("", Validators.required),
+        "confirmPassword": new FormControl("",[Validators.required])
+      }, {validators: this.userValidationService.passwordMatchingValidator ,
+        updateOn:'change'})
+
+    }, {asyncValidators: this.userValidationService.nonRepeatedEmailValidator()}
+  );
+
+  this.registrationForm.valueChanges.subscribe(()=> {
+    console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
+    /!*console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*!/
+  })
+
+}*/

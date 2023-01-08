@@ -49,4 +49,12 @@ public class UserService {
         return false;
     }
 
+    public boolean checkIfUserIsUnique(String email) {
+        long numberOfUsersWithSameEmail = userRepository.checkIfEmailAlreadyExistsInDb(email);
+
+        logger.info("Verification for: " + email + " . There are " + numberOfUsersWithSameEmail + " repetitions in the DB");
+
+        return (numberOfUsersWithSameEmail == 0) ? true : false;
+    }
+
 }

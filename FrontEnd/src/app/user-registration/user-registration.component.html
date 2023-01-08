@@ -28,7 +28,7 @@
                    #inputEmail
             >
             <div class="form-text"
-                 *ngIf="registrationForm.getError('emailIsAlreadyInDb')"
+                 *ngIf="registrationForm.get('email')?.getError('emailIsAlreadyInDb')"
             >Already registered email. Please choose another one.
             </div>
           </div>
