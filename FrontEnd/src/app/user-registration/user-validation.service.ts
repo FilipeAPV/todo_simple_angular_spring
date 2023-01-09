@@ -21,13 +21,9 @@ export class UserValidationService {
       return password && confirmPassword && password.value === confirmPassword.value ? null : {passwordMismatch: true};
     }
 
-   // need to limit the number of times this is called
-  // maybe only when the user leaves the input field
   nonRepeatedEmailValidator(): AsyncValidatorFn {
 
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-
-      const emailToCheck: string = control.value;
 
       return this.checkIfUserIsUnique(control.value).pipe(
         map(isUnique => {

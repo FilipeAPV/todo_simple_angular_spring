@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,11 +34,20 @@ public class UserRestController {
     }
 
     @PostMapping("/registerUser")
-    public ResponseEntity<String> registerUser(@RequestBody UserModel user) {
+    public ResponseEntity<BindingResult> registerUser(@RequestBody UserModel user,
+                                                BindingResult bindingResult) {
 
         boolean isSaved = userService.saveUser(user);
 
-        return ResponseEntity.ok("Success from backend");
+        if (isSaved && !bindingResult.hasErrors()) {
+            return ResponseEntity.ok().build();
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult);
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/verifyIfEmailExists")

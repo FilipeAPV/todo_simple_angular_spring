@@ -6,7 +6,7 @@ import {
   Validators
 } from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
-import {catchError, of, tap} from "rxjs";
+import {catchError, of, tap, throwError} from "rxjs";
 import {Router} from "@angular/router";
 import {UserRegistrationService} from "./user-registration.service";
 import {UserValidationService} from "./user-validation.service";
@@ -22,46 +22,51 @@ export class UserRegistrationComponent implements OnInit {
 
   constructor(private http: HttpClient,
               private router: Router,
-              private userValidationService: UserValidationService) {
+              private userValidationService: UserValidationService,
+              private usrRegistrationService: UserRegistrationService) {
 
   }
 
   ngOnInit(): void {
     this.registrationForm = new FormGroup({
-      "firstName": new FormControl("", [Validators.required, Validators.minLength(2)]),
-      "lastName": new FormControl("", Validators.required),
-      "email": new FormControl("", {
+      "firstName": new FormControl("testFName", [Validators.required, Validators.minLength(2)]),
+      "lastName": new FormControl("testLName", Validators.required),
+      "email": new FormControl("fl@test.com", {
         validators: [Validators.required, Validators.email, Validators.minLength(7), Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')],
         asyncValidators: [this.userValidationService.nonRepeatedEmailValidator()],
         updateOn:'blur' }),
 
       "passwords": new FormGroup({
-        "password": new FormControl("", Validators.required),
-        "confirmPassword": new FormControl("",[Validators.required])
+        "password": new FormControl("a", Validators.required),
+        "confirmPassword": new FormControl("a",[Validators.required])
       }, {validators: this.userValidationService.passwordMatchingValidator ,
       updateOn:'change'})
 
     });
 
     this.registrationForm.valueChanges.subscribe(()=> {
-      console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
+      /*console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));*/
       /*console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*/
     })
   }
 
   onSubmit() {
 
-    console.log(this.registrationForm.value);
-    const registrationData = this.registrationForm.value;
-    this.http.post('http://localhost:8080/registerUser', registrationData)
+    const userInfo = this.usrRegistrationService.createUserObject(this.registrationForm);
+    const url:string = "http://localhost:8080/registerUser";
+
+    this.http.post(url, userInfo)
       .pipe(
-        tap(response => console.log("Successfully registered!")),
-        catchError(error => of("Registration Failed: " + error.value))
+        tap(response => {
+          console.log("Successfully registered!");
+        }),
+        catchError(error => throwError(error))
       )
       .subscribe({
-        next: response => console.log(response),
-        error: error => console.log(error)
-      });
+        next: (res) => { },
+        error: (error) => console.error("Registration Failed:", error),
+        complete: () => console.log("completed")
+  });
   }
 
   isNotEmpty(input: AbstractControl) {
@@ -98,28 +103,3 @@ export class UserRegistrationComponent implements OnInit {
   }
 
 }
-
-/*
-
-ngOnInit(): void {
-  this.registrationForm = new FormGroup({
-      "firstName": new FormControl("", [Validators.required, Validators.minLength(2)]),
-      "lastName": new FormControl("", Validators.required),
-      "email": new FormControl("", [Validators.required,
-        Validators.email, Validators.minLength(7)]),
-
-      "passwords": new FormGroup({
-        "password": new FormControl("", Validators.required),
-        "confirmPassword": new FormControl("",[Validators.required])
-      }, {validators: this.userValidationService.passwordMatchingValidator ,
-        updateOn:'change'})
-
-    }, {asyncValidators: this.userValidationService.nonRepeatedEmailValidator()}
-  );
-
-  this.registrationForm.valueChanges.subscribe(()=> {
-    console.log("err: " + this.registrationForm?.getError("emailIsAlreadyInDb"));
-    /!*console.log(this.registrationForm.get('passwords')?.getError('passwordMismatch'))*!/
-  })
-
-}*/

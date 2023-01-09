@@ -1,6 +1,7 @@
 package com.mytodo.backend.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mytodo.backend.annotations.UniqueEmail;
 import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.task.TaskModel;
 import jakarta.persistence.*;
