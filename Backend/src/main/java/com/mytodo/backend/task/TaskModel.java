@@ -1,12 +1,13 @@
 package com.mytodo.backend.task;
 
+import com.mytodo.backend.BaseEntity;
 import com.mytodo.backend.user.UserModel;
 import jakarta.persistence.*;
 
 
 @Entity
 @Table(name = "task")
-public class TaskModel {
+public class TaskModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

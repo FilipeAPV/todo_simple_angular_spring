@@ -1,7 +1,7 @@
 package com.mytodo.backend.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mytodo.backend.annotations.UniqueEmail;
+import com.mytodo.backend.BaseEntity;
 import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.task.TaskModel;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
-public class UserModel {
+public class UserModel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
@@ -44,7 +44,7 @@ public class UserModel {
     @JsonIgnore
     private List<TaskModel> taskModel = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(

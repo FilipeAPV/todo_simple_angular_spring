@@ -1,12 +1,13 @@
 package com.mytodo.backend.role;
 
+import com.mytodo.backend.BaseEntity;
 import jakarta.persistence.*;
 
 import java.beans.ConstructorProperties;
 
 @Entity
 @Table(name = "role")
-public class RoleModel {
+public class RoleModel extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

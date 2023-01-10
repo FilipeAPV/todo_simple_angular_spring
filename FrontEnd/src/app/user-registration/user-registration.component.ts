@@ -53,12 +53,13 @@ export class UserRegistrationComponent implements OnInit {
   onSubmit() {
 
     const userInfo = this.usrRegistrationService.createUserObject(this.registrationForm);
-    const url:string = "http://localhost:8080/registerUser";
+    const url:string = "http://localhost:8080/api/registerUser";
 
     this.http.post(url, userInfo)
       .pipe(
         tap(response => {
           console.log("Successfully registered!");
+          this.router.navigate(["/login"]);
         }),
         catchError(error => throwError(error))
       )

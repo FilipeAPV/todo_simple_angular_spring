@@ -1,5 +1,6 @@
 package com.mytodo.backend.role;
 
+import com.mytodo.backend.auditing.AuditAwareImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ class RoleRepositoryTest {
 
     @Autowired
     private RoleRepository roleRepository;
+
+
 
     RoleModel admin;
     RoleModel user;

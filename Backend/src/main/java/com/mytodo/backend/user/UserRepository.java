@@ -8,4 +8,5 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
     @Query("SELECT COUNT(e) FROM UserModel e WHERE e.email = ?1")
     long checkIfEmailAlreadyExistsInDb(String email);
 
+    UserModel findByEmail(String username);
 }

@@ -38,7 +38,7 @@ export class UserValidationService {
   }
 
   checkIfUserIsUnique(email: string): Observable<boolean> {
-    const url:string = "http://localhost:8080/verifyIfEmailExists";
+    const url:string = "http://localhost:8080/api/verifyIfEmailExists";
     return this.http.get<boolean>(url, {params: {email: email}});
   }
 
