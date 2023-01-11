@@ -2,6 +2,9 @@ package com.mytodo.backend.user;
 
 import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.security.session.SessionRegistry;
+import com.mytodo.backend.task.TaskDTO;
+import com.mytodo.backend.task.TaskModel;
+import com.mytodo.backend.task.TaskRepository;
 import com.mytodo.backend.user.dto.ResponseDTO;
 import com.mytodo.backend.user.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +13,10 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,16 +28,22 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/api")
 public class UserRestController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private final UserService userService;
@@ -50,12 +61,7 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public List<UserModel> list() {
-        return userRepository.findAll();
-    }
-
-    @PostMapping("/api/registerUser")
+    @PostMapping("/registerUser")
     public ResponseEntity<BindingResult> registerUser(@RequestBody UserModel user,
                                                 BindingResult bindingResult) {
 
@@ -72,23 +78,13 @@ public class UserRestController {
         return ResponseEntity.badRequest().build();
     }
 
-    @GetMapping("/api/verifyIfEmailExists")
+    @GetMapping("/verifyIfEmailExists")
     public ResponseEntity<Boolean> verifyIfEmailExists(@RequestParam(name = "email") String email) {
         boolean isUserUnique = userService.checkIfUserIsUnique(email);
         return new ResponseEntity<>(isUserUnique, HttpStatus.OK);
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(List<RoleModel> roles) {
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        // Since we don't have the prefix "ROLE_" inside our DB, it needs to be appended here.
-
-        /*roles.forEach(role -> grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"+role.getName())));*/
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_"));
-
-        return grantedAuthorities;
-    }
-
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO userDto) {
 
         logger.info("userDto: " + userDto.getUsername() + " : " + userDto.getPassword());
@@ -112,15 +108,14 @@ public class UserRestController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/api/list")
+    @GetMapping("/list")
     public List<String> getListItems() {
         return List.of("1", "2", "3");
     }
 
-    @GetMapping("/api/users")
+    @GetMapping("/users")
     public void getList(HttpSession httpSession) {
-        System.out.println("Authenticated Users");
-        System.out.println(sessionRegistry.getSessions());
+
 
         System.out.println("Logged In Users");
         List<String> loggedInUsers = new ArrayList<>();
@@ -140,30 +135,9 @@ public class UserRestController {
             String username = principal.toString();
             System.out.println("Username: " + username);
         }
-
-
     }
 
-/*    @GetMapping("/login")
-    public ResponseEntity<BindingResult> login(@RequestBody UserCredentialsModel credentials) {
-
-        UsernamePasswordAuthenticationToken authReq
-                = new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword());
-
-        Authentication auth = authenticationManager.authenticate(authReq);
-
-        SecurityContext sc = SecurityContextHolder.getContext();
-
-        sc.setAuthentication(auth);
-
-        logger.info(auth.getName());
-        logger.info(auth.getPrincipal().toString());
-        logger.info(auth.getAuthorities().toString());
-
-        return ResponseEntity.ok().build();
-    }*/
-
-   @GetMapping("/api/logout")
+   @GetMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response
                                        ) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -180,9 +154,11 @@ public class UserRestController {
             new SecurityContextLogoutHandler().logout(request, response, auth);
             request.getSession().invalidate();
             SecurityContextHolder.clearContext();
+            sessionRegistry.removeSession(request.getHeader(HttpHeaders.AUTHORIZATION));
         }
 
         return ResponseEntity.ok().build();
     }
+
 
 }

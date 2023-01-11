@@ -36,9 +36,10 @@ public class SessionFilter extends OncePerRequestFilter {
 
         final String sessionId = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        logger.info("sessionId = request.getHeader(HttpHeaders.AUTHORIZATION): " + sessionId );
+        logger.info("sessionId (Authorization : Header): " + sessionId );
 
         if (sessionId == null || sessionId.length() == 0) {
+            logger.warn("Access Rejected: sessionId not provided");
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,6 +47,7 @@ public class SessionFilter extends OncePerRequestFilter {
         final String username = sessionRegistry.getUsernameForSession(sessionId);
 
         if (username == null) {
+            logger.warn("Access Rejected: No user found for sessionId provided");
             filterChain.doFilter(request, response);
             return;
         }
@@ -61,18 +63,8 @@ public class SessionFilter extends OncePerRequestFilter {
         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
+        logger.info(username + "is authorized");
 
         filterChain.doFilter(request, response);
-    }
-
-    private boolean isInvalid(String sessionId) {
-        try {
-            UUID uuid = UUID.fromString(sessionId);
-            logger.info("sessionId VALID : " + sessionId);
-            return false;
-        } catch (IllegalArgumentException e) {
-            logger.info("sessionId INVALID : " + sessionId);
-            return true;
-        }
     }
 }

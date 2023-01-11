@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.swing.plaf.PanelUI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -22,7 +24,7 @@ public class SessionRegistry {
 
         final String sessionId = generateSessionId();
 
-        logger.info("Saved in SESSION: " + username + " : " + sessionId);
+        logger.info("Saved in SESSIONS: " + username + " : " + sessionId);
 
         SESSIONS.put(sessionId, username);
         return sessionId;
@@ -49,5 +51,15 @@ public class SessionRegistry {
 
     public HashMap<String, String> getSessions() {
         return SESSIONS;
+    }
+
+    public void removeSession(String sessionId) {
+        Optional<String> removedUser = Optional.ofNullable(SESSIONS.remove(sessionId));
+        if (removedUser.isPresent()) {
+            logger.info(removedUser + "has been removed from SESSIONS");
+        } else {
+            logger.info("Unable to find a user correspondent with that sessionId");
+        }
+
     }
 }

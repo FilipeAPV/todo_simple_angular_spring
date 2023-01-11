@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/users").permitAll()
                 .requestMatchers("/api/registerUser").permitAll()
                 .requestMatchers("/api/verifyIfEmailExists").permitAll()
+                .requestMatchers("/api/saveTask").permitAll()
                 .anyRequest().authenticated();
 
 
@@ -58,34 +59,4 @@ public class SecurityConfiguration {
 
         return http.build();
     }
-
-    /*@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        httpSecurity
-                .csrf().disable()
-                .cors().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/verifyIfEmailExists").permitAll()
-                .requestMatchers("/registerUser").permitAll()
-                .requestMatchers("/").permitAll()
-*//*                .requestMatchers("/applogout").permitAll()
-                .requestMatchers("/login").permitAll()*//*
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().loginPage("/login").defaultSuccessUrl("/users").permitAll()
-                .and()
-                .logout().logoutUrl("/logout").invalidateHttpSession(true).deleteCookies("JSESSIONID").logoutSuccessHandler(
-                        (httpServletRequest, httpServletResponse, authentication) -> {
-                            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-                            System.out.println(httpServletRequest.getHeaderNames().toString());
-                            httpServletResponse.setHeader("Access-Control-Allow-Origin" , "testing");
-                        })
-                .and()
-                .httpBasic();
-        return httpSecurity.build();
-
-    } */
-
 }
