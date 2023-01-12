@@ -36,7 +36,7 @@ class TaskRepositoryTest {
         user1.setRoleModel(roleRepository.findAll());
         savedUser = userRepository.save(user1);
 
-        task1 = new TaskModel("Smile Often","Smile first thing in the morning");
+        task1 = new TaskModel("Smile Often","Smile first thing in the morning",true);
         task1.setUserModel(savedUser);
     }
 

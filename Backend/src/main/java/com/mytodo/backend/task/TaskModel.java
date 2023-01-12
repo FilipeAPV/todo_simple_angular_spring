@@ -19,6 +19,9 @@ public class TaskModel extends BaseEntity {
     @Column(nullable = false)
     private String text;
 
+    @Column(nullable = false)
+    private boolean done;
+
     /**
      * name = "user_id",
      *   Specifies the name of this column in this table `task` that represents the foreign key to the user table.
@@ -39,9 +42,10 @@ public class TaskModel extends BaseEntity {
             nullable = false)
     private UserModel userModel;
 
-    public TaskModel(String title, String text) {
+    public TaskModel(String title, String text, boolean done) {
         this.title = title;
         this.text = text;
+        this.done = done;
     }
 
     public TaskModel() {
@@ -78,5 +82,13 @@ public class TaskModel extends BaseEntity {
 
     public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
+    }
+
+    public boolean getDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }

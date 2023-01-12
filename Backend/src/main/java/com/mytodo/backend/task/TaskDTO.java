@@ -4,6 +4,14 @@ public class TaskDTO {
     private String title;
     private String content;
 
+    private boolean done;
+
+    public TaskDTO(String title, String content, boolean done) {
+        this.title = title;
+        this.content = content;
+        this.done = done;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -26,5 +34,13 @@ public class TaskDTO {
                 "title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public boolean getDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }

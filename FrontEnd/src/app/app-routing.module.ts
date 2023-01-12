@@ -19,13 +19,6 @@ const appRoutes: Routes = [
       {path : '**', redirectTo: ''}
 
     ] },
-
-/*  {path : 'login', component: UserLoginComponent},
-  {path : 'register', component: UserRegistrationComponent},
-  {path : 'dashboard', component: DashboardComponent, children: [
-      {path: 'addTask', component: DashboardTaskComponent},
-      {path: 'listTask', component: DashboardTaskListComponent}
-    ]}*/
 ]
 
 @NgModule({

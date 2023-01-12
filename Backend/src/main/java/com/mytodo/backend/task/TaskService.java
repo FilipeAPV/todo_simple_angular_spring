@@ -10,7 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -28,7 +30,7 @@ public class TaskService {
     public boolean saveTask(TaskDTO taskDTO) {
 
         String currentUserName = getAuthenticatedUsername();
-        TaskModel taskToSave = new TaskModel(taskDTO.getTitle(), taskDTO.getContent());
+        TaskModel taskToSave = new TaskModel(taskDTO.getTitle(), taskDTO.getContent(), taskDTO.getDone());
         Optional<UserModel> userModel = Optional.ofNullable(userRepository.findByEmail(currentUserName));
 
         if (userModel.isPresent()) {
@@ -56,5 +58,14 @@ public class TaskService {
             return true;
         }
         return false;
+    }
+
+    public List<TaskDTO> getList() {
+        String currentUserName = getAuthenticatedUsername();
+
+        return   taskRepository.findAll().stream()
+                .filter(task -> task.getUserModel().getEmail().equals(currentUserName))
+                .map(task -> new TaskDTO(task.getTitle(), task.getText(), task.getDone()))
+                .collect(Collectors.toList());
     }
 }
