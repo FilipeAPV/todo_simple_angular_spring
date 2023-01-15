@@ -30,8 +30,18 @@ public class TaskService {
     public boolean saveTask(TaskDTO taskDTO) {
 
         String currentUserName = getAuthenticatedUsername();
-        TaskModel taskToSave = new TaskModel(taskDTO.getTitle(), taskDTO.getContent(), taskDTO.getDone());
         Optional<UserModel> userModel = Optional.ofNullable(userRepository.findByEmail(currentUserName));
+
+        if (taskDTO.getId() > 0) {
+            Optional<TaskModel> taskModel = taskRepository.findById(taskDTO.getId());
+            if (taskModel.isPresent() && taskModel.get().getUserModel().getEmail().equals(currentUserName)) {
+                taskModel.get().setDone(taskDTO.getDone());
+                logger.info("Task id: " + taskModel.get().getId() + " will be updated");
+                return isSaved(persistTask(taskModel.get()));
+            }
+        }
+
+        TaskModel taskToSave = new TaskModel(taskDTO.getTitle(), taskDTO.getContent(), taskDTO.getDone());
 
         if (userModel.isPresent()) {
             taskToSave.setUserModel(userModel.get());
@@ -40,9 +50,13 @@ public class TaskService {
             return false;
         }
 
-        TaskModel savedTask = taskRepository.save(taskToSave);
+        TaskModel savedTask = persistTask(taskToSave);
 
         return isSaved(savedTask);
+    }
+
+    private TaskModel persistTask(TaskModel taskModel) {
+        return taskRepository.save(taskModel);
     }
 
     private String getAuthenticatedUsername() {
@@ -65,7 +79,7 @@ public class TaskService {
 
         return   taskRepository.findAll().stream()
                 .filter(task -> task.getUserModel().getEmail().equals(currentUserName))
-                .map(task -> new TaskDTO(task.getTitle(), task.getText(), task.getDone()))
+                .map(task -> new TaskDTO(task.getId(), task.getTitle(), task.getText(), task.getDone()))
                 .collect(Collectors.toList());
     }
 }

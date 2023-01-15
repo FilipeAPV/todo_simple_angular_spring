@@ -19,11 +19,8 @@ export class DashboardTaskListComponent implements OnInit {
               private dashboardService: DashboardService) { }
 
   ngOnInit(): void {
-    /*console.log("DashboardTaskListComponent: ngOnInit()")*/
     this.route.queryParams.subscribe((queryParameter: Params) => {
       this.isDone = (queryParameter['isDone'] === 'true');
-      console.log("route params have changed")
-      console.log(this.isDone)
     })
 
     this.dashboardService.getTaskList();
@@ -33,9 +30,12 @@ export class DashboardTaskListComponent implements OnInit {
     });
   }
 
-  getCurrentTaskList(taskList:Task[]) {
-    console.log("getCurrentTaskList(taskList:Task[])")
-    console.log(this.isDone)
+  getCurrentTaskList(taskList:Task[]): Task[] {
     return taskList.filter(task => task.done === this.isDone);
+  }
+
+  setAsDone(task: Task): void {
+    task.done = true;
+    this.dashboardService.persistTask(task);
   }
 }

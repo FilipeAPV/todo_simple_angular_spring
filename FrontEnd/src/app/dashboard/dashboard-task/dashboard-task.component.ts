@@ -28,25 +28,9 @@ export class DashboardTaskComponent implements OnInit {
     );
   }
 
-  onSubmit() {
-    const task = new Task(this.taskForm.get('taskTitle')?.value, this.taskForm.get('taskContent')?.value, false);
-    const url = "http://localhost:8080/api/saveTask";
-
-    this.http.post<any>(url, task)
-      .pipe(
-        tap(
-          response => {
-            console.log(response);
-          }
-        )
-      )
-      .subscribe( {
-        next: (response) => {
-          this.dashboardService.getTaskList();
-          this.router.navigate(["/dashboard/listTask"]);
-        },
-        error: (err) => console.log("Saving process has failed!")
-      })
-
+  onSubmit(): void {
+    const task = new Task(0, this.taskForm.get('taskTitle')?.value, this.taskForm.get('taskContent')?.value, false);
+    this.dashboardService.persistTask(task);
+    console.log(task);
   }
 }

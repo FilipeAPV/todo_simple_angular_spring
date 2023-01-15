@@ -12,11 +12,11 @@
         </thead>
         <tbody class="table-group-divider">
         <tr *ngFor="let task of getCurrentTaskList(taskList); index as i">
-          <th scope="row">{{i}}</th>
+          <th scope="row">{{i + 1 }}</th>
           <td>{{task.title}}</td>
-          <td>{{task.title}}</td>
-          <td>
-            <button class="btn btn-primary">Done</button>
+          <td>{{task.content}}</td>
+          <td *ngIf="!task.done">
+            <button class="btn btn-primary" (click)="setAsDone(task)">Done</button>
           </td>
         </tr>
         </tbody>
