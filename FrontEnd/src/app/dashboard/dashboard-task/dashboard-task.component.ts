@@ -4,6 +4,7 @@ import {Task} from "./Task";
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {tap} from "rxjs";
+import {DashboardService} from "../dashboard.service";
 
 @Component({
   selector: 'app-dashboard-task',
@@ -15,7 +16,8 @@ export class DashboardTaskComponent implements OnInit {
   taskForm: FormGroup = new FormGroup({});
 
   constructor(private http:HttpClient,
-              private router:Router) { }
+              private router:Router,
+              private dashboardService: DashboardService) { }
 
   ngOnInit(): void {
     this.taskForm.addControl(
@@ -40,7 +42,8 @@ export class DashboardTaskComponent implements OnInit {
       )
       .subscribe( {
         next: (response) => {
-          this.router.navigate(["/dashboard/listTask"])
+          this.dashboardService.getTaskList();
+          this.router.navigate(["/dashboard/listTask"]);
         },
         error: (err) => console.log("Saving process has failed!")
       })

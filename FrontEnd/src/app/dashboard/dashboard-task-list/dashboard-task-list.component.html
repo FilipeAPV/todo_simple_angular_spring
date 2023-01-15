@@ -11,11 +11,13 @@
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
+        <tr *ngFor="let task of taskList; index as i">
+          <th scope="row">{{i}}</th>
+          <td>{{task.title}}</td>
+          <td>{{task.title}}</td>
+          <td>
+            <button class="btn btn-primary">Done</button>
+          </td>
         </tr>
         </tbody>
       </table>

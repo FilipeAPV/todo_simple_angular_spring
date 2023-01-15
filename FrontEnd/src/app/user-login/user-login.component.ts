@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, tap} from "rxjs";
+import {DashboardService} from "../dashboard/dashboard.service";
 
 @Component({
   selector: 'app-user-login',
@@ -15,11 +16,12 @@ export class UserLoginComponent implements OnInit {
   sessionId: string = "";
 
   constructor(private router: Router,
-              private http: HttpClient) { }
+              private http: HttpClient,
+              private dashboardService: DashboardService) { }
 
   ngOnInit(): void {
     this.loginForm.addControl(
-      "email", new FormControl("flaaaa@test.com", [Validators.required, Validators.email])
+      "email", new FormControl("ze@gmail.com", [Validators.required, Validators.email])
     );
     this.loginForm.addControl(
       "password", new FormControl("a", Validators.required)
@@ -46,7 +48,7 @@ export class UserLoginComponent implements OnInit {
           this.sessionId = res.sessionId;
 
           sessionStorage.setItem('token', this.sessionId);
-
+          this.dashboardService.getTaskList();
           this.router.navigate(["/dashboard/addTask"]);
         },
         error: (error) => console.log("Login Failed: " , error)
