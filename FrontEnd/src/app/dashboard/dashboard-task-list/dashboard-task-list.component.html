@@ -11,7 +11,7 @@
         </tr>
         </thead>
         <tbody class="table-group-divider">
-        <tr *ngFor="let task of taskList; index as i">
+        <tr *ngFor="let task of getCurrentTaskList(taskList); index as i">
           <th scope="row">{{i}}</th>
           <td>{{task.title}}</td>
           <td>{{task.title}}</td>
