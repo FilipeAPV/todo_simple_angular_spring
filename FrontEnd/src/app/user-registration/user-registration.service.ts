@@ -7,6 +7,7 @@ import {User} from "./User";
     providedIn: 'root'
   })
 export class UserRegistrationService {
+  public isSuccessfullyRegistered: boolean = false;
 
   constructor(private http: HttpClient) {
   }
@@ -19,5 +20,4 @@ export class UserRegistrationService {
       formGroup.get('passwords.password')?.value
     )
   }
-
 }

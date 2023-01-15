@@ -51,20 +51,21 @@ export class UserRegistrationComponent implements OnInit {
   }
 
   onSubmit() {
-
     const userInfo = this.usrRegistrationService.createUserObject(this.registrationForm);
     const url:string = "http://localhost:8080/api/registerUser";
-
+    console.log(userInfo)
     this.http.post(url, userInfo)
       .pipe(
         tap(response => {
           console.log("Successfully registered!");
-          this.router.navigate(["/login"]);
         }),
         catchError(error => throwError(error))
       )
       .subscribe({
-        next: (res) => { },
+        next: (res) => {
+          this.usrRegistrationService.isSuccessfullyRegistered = true;
+          this.router.navigate(["/login"]);
+        },
         error: (error) => console.error("Registration Failed:", error),
         complete: () => console.log("completed")
   });

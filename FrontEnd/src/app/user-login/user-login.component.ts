@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, tap} from "rxjs";
 import {DashboardService} from "../dashboard/dashboard.service";
+import {UserRegistrationService} from "../user-registration/user-registration.service";
 
 @Component({
   selector: 'app-user-login',
@@ -14,10 +15,13 @@ export class UserLoginComponent implements OnInit {
 
   loginForm: FormGroup = new FormGroup({});
   sessionId: string = "";
+  isSuccessfullyRegistered: boolean = false;
+  setFadeClass: boolean = false;
 
   constructor(private router: Router,
               private http: HttpClient,
-              private dashboardService: DashboardService) { }
+              private dashboardService: DashboardService,
+              private usrRegistrationService: UserRegistrationService) { }
 
   ngOnInit(): void {
     this.loginForm.addControl(
@@ -26,6 +30,15 @@ export class UserLoginComponent implements OnInit {
     this.loginForm.addControl(
       "password", new FormControl("a", Validators.required)
     );
+
+    this.isSuccessfullyRegistered = this.usrRegistrationService.isSuccessfullyRegistered;
+
+    setTimeout(()=>{this.setFadeClass=true}, 1800)
+
+    setTimeout(() => {
+      this.usrRegistrationService.isSuccessfullyRegistered = false;
+      this.isSuccessfullyRegistered = this.usrRegistrationService.isSuccessfullyRegistered;
+      }, 2000);
   }
 
   onSubmit() {

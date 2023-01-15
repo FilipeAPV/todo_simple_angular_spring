@@ -6,3 +6,22 @@
 .setContainerHeight {
   height: 100vh;
 }
+
+.fade-out {
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.fade-out.fade {
+  opacity: 0;
+}
+
+.parent {
+  position: relative;
+}
+.child {
+  position: absolute;
+  top: -85px;
+  left: 15px;
+  width: 470px;
+}
