@@ -62,6 +62,7 @@ export class UserLoginComponent implements OnInit {
 
           sessionStorage.setItem('token', this.sessionId);
           this.dashboardService.getTaskList();
+          this.dashboardService.checkIfAdmin();
           this.router.navigate(["/dashboard/addTask"]);
         },
         error: (error) => console.log("Login Failed: " , error)

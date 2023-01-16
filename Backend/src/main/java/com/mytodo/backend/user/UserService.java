@@ -6,9 +6,12 @@ import jakarta.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -65,6 +68,12 @@ public class UserService {
         logger.info("Verification for: " + email + " . There are " + numberOfUsersWithSameEmail + " repetitions in the DB");
 
         return (numberOfUsersWithSameEmail == 0) ? true : false;
+    }
+
+    public boolean checkIfCurrentUserIsAdmin() {
+        List<SimpleGrantedAuthority> authorityList = (List<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        boolean isAdmin = authorityList.stream().anyMatch(sga -> "admin".equals(sga.getAuthority()));
+        return isAdmin;
     }
 
 }

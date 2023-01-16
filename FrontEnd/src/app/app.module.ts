@@ -14,6 +14,7 @@ import { DashboardMenuComponent } from './dashboard/dashboard-menu/dashboard-men
 import { DashboardTaskListComponent } from './dashboard/dashboard-task-list/dashboard-task-list.component';
 import {AuthenticationGuard} from "./authentication.guard";
 import {RequestInterceptor} from "./request.interceptor";
+import { UsersListComponent } from './dashboard/users-list/users-list.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {RequestInterceptor} from "./request.interceptor";
     DashboardComponent,
     DashboardTaskComponent,
     DashboardMenuComponent,
-    DashboardTaskListComponent
+    DashboardTaskListComponent,
+    UsersListComponent
   ],
   imports: [
     BrowserModule,

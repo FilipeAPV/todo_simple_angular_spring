@@ -1,38 +1,26 @@
 package com.mytodo.backend.user;
 
-import com.mytodo.backend.role.RoleModel;
 import com.mytodo.backend.security.session.SessionRegistry;
-import com.mytodo.backend.task.TaskDTO;
-import com.mytodo.backend.task.TaskModel;
 import com.mytodo.backend.task.TaskRepository;
 import com.mytodo.backend.user.dto.ResponseDTO;
 import com.mytodo.backend.user.dto.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -84,7 +72,19 @@ public class UserRestController {
         return new ResponseEntity<>(isUserUnique, HttpStatus.OK);
     }
 
+    @GetMapping("/verifyIfUserIsAdmin")
+    public ResponseEntity<Void> verifyIfUserIsAdmin() {
+
+        if (userService.checkIfCurrentUserIsAdmin()) {
+            logger.info("Current user has the admin role");
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
     @PostMapping("/login")
+    @Transactional
     public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO userDto) {
 
         logger.info("userDto: " + userDto.getUsername() + " : " + userDto.getPassword());
@@ -105,36 +105,12 @@ public class UserRestController {
 
         response.setSessionId(sessionId);
 
+        boolean a = userRepository.isEmailUnique("sadds");
+        System.out.println(a);
+        a = userRepository.isEmailUnique("paul@gmail.com");
+        System.out.println(a);
+
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/list")
-    public List<String> getListItems() {
-        return List.of("1", "2", "3");
-    }
-
-    @GetMapping("/users")
-    public void getList(HttpSession httpSession) {
-
-
-        System.out.println("Logged In Users");
-        List<String> loggedInUsers = new ArrayList<>();
-        Enumeration attributeNames = httpSession.getAttributeNames();
-        while (attributeNames.hasMoreElements()) {
-            loggedInUsers.add(attributeNames.nextElement().toString());
-        }
-
-        loggedInUsers.forEach(user -> System.out.println(user));
-
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            String username = ((UserDetails)principal).getUsername();
-            System.out.println("Username: " + username);
-        } else {
-            String username = principal.toString();
-            System.out.println("Username: " + username);
-        }
     }
 
    @GetMapping("/logout")
@@ -159,6 +135,4 @@ public class UserRestController {
 
         return ResponseEntity.ok().build();
     }
-
-
 }

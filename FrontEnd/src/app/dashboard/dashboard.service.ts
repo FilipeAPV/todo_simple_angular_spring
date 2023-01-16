@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 export class DashboardService {
 
   updatedArray = new Subject<Task[]>();
+  isAdmin = new Subject<boolean>();
 
   constructor(private http: HttpClient,
               private router: Router) {
@@ -22,7 +23,6 @@ export class DashboardService {
       .pipe(
         tap( res => {
           console.log("Call has been made!");
-
         }))
       .subscribe({
         next: (res: Task[]) => {
@@ -51,5 +51,19 @@ export class DashboardService {
         },
         error: (err) => console.log("Saving process has failed!")
       });
+  }
+
+  checkIfAdmin() {
+    const url = "http://localhost:8080/api/verifyIfUserIsAdmin";
+    this.http.get<any>(url).pipe(
+      tap()
+    )
+      .subscribe({
+        next: (resolve) => {
+          this.isAdmin.next(true);
+        },
+        error: (err) => console.log("User is not Admin or verification has failed: " + err)
+      });
+
   }
 }

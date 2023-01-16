@@ -14,6 +14,7 @@ export class DashboardMenuComponent implements OnInit {
 
   numberOfNonDoneTasks: number = 0;
   numberOfDoneTasks: number = 0;
+  isAdmin: boolean = false;
 
   constructor(private http:HttpClient,
               private router: Router,
@@ -27,6 +28,10 @@ export class DashboardMenuComponent implements OnInit {
         this.numberOfDoneTasks = arr.filter(task => task.done).length;
       }
     );
+
+    this.dashBoardService.isAdmin.subscribe((isAdmin: boolean) => {
+      this.isAdmin = isAdmin;
+    })
   }
 
   logout() {
