@@ -1,29 +1,7 @@
-# README #
+## About this Repository
+This repository contains a simple project that was created as an opportunity to practice my newly acquired Angular skills. The project is a simple TODO list application that allows users to view, and add tasks.
 
-This README would normally document whatever steps are necessary to get your application up and running.
+One of the main objectives of this project was to gain experience working with API endpoints, as I was previously used to working with Thymeleaf in a monolith architecture.
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+## Technical stack
+The project was built using Angular as the frontend framework and Java(Spring) as the backend framework. The database used is MySQL.
