@@ -38,7 +38,7 @@ public class UserModel extends BaseEntity {
     private String password;
 
     @OneToMany(
-            mappedBy = "userModel", // Specifies the name of the field in the TaskModel entity that represents the other side of the relationship.
+            mappedBy = "userModel", // Specifies the name of the field in the TaskModel entity that represents the other side of the relationship..
             cascade = CascadeType.REMOVE
             )
     @JsonIgnore
